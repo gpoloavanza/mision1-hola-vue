@@ -1,5 +1,8 @@
 <template>
+    <!-- Receives the new task name from TaskForm -->
     <TaskForm @add-task="addTask"/>
+
+    <!-- Passes tasks and computed totalDone to TaskList -->
     <TaskList :tasks="tasks" :total-done="totalDone" @toggle-done="toggleDone" @remove-task="removeTask"/>
 </template>
 
@@ -9,8 +12,10 @@ import TaskForm from './components/TaskForm.vue'
 import TaskList from './components/TaskList.vue'
 import type { Task } from './types'
 
+// Reactive array of tasks
 const tasks = ref<Task[]>([])
 
+// Load tasks from LocalStorage when the app starts
 onMounted(() => {
   const saved = localStorage.getItem('tasks')
   if (saved) {
@@ -18,14 +23,17 @@ onMounted(() => {
   }
 })
 
+// Save tasks to LocalStorage whenever they change
 watch(tasks, (newTasks) => {
   localStorage.setItem('tasks', JSON.stringify(newTasks))
 }, { deep: true })
 
+// Computed property: counts completed tasks
 const totalDone = computed(() => tasks
     .value
     .reduce((total, task) => task.state ? total + 1 : total, 0))
 
+// Add a new task to the list
 function addTask(taskName: string) {
   tasks.value.push({
     id: Date.now(),
@@ -34,6 +42,7 @@ function addTask(taskName: string) {
   })
 }
 
+// Toggle the "done" state of a task
 function toggleDone(id: number) {
   const task = tasks.value.find(task => task.id === id)
   if (task) {
@@ -41,6 +50,7 @@ function toggleDone(id: number) {
   }
 }
 
+// Remove a task by ID
 function removeTask(id: number) {
   const index = tasks.value.findIndex(task => task.id === id)
     if (index !== -1) {
