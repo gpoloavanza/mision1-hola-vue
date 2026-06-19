@@ -12,11 +12,11 @@
 
         <!-- Renders each task using TaskItem component -->
         <TaskItem 
-          v-for="task in props.tasks" 
-          :key="task.id" 
-          :task="task"
-          @toggle-done="emits('toggleDone', $event)"
-          @remove-task="emits('removeTask', $event)"
+            v-for="task in props.tasks" 
+            :key="task.id" 
+            :task="task"
+            @toggle-done="emits('toggleDone', $event)"
+            @remove-task="emits('removeTask', $event)"
         />
     </div>
 </template>

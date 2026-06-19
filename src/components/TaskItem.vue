@@ -1,10 +1,13 @@
 <template>
     <article>
         <label>
-            <!-- Checkbox to toggle the task state -->
-            <input type="checkbox" @input="emit('toggleDone', task.id)" :checked="task.state"/>
-            
-            <!-- Display the task title -->
+          <!-- Checkbox to toggle the task state -->
+          <input 
+              type="checkbox" 
+              @input="emit('toggleDone', task.id)" 
+              :checked="task.state"/>
+                  
+              <!-- Display the task title -->
             {{ task.title }}
         </label>
 

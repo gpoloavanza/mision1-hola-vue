@@ -1,20 +1,23 @@
 <template>
     <div class="container">
-      <h1>Añadir tareas</h1>
+        <h1>Añadir tareas</h1>
 
-      <!-- The form prevents default submit behavior and calls formSubmitted() -->
-      <form @submit.prevent="formSubmitted">
-        <div class="form-group">
-          <label for="taskName">Nueva Tarea</label>
+        <!-- The form prevents default submit behavior and calls formSubmitted() -->
+        <form @submit.prevent="formSubmitted">
+            <div class="form-group">
+                <label for="taskName">Nueva Tarea</label>
 
-         <!-- v-model binds the input value to the reactive ref 'taskName' -->
-        <input v-model="taskName" type="text" id="taskName" placeholder="Nombre de la tarea" />
-      </div>
-      
-      <!-- Button triggers the form submit event -->
-      <button>Añadir tarea</button>
-    </form>
-  </div>
+                <!-- v-model binds the input value to the reactive ref 'taskName' -->
+                <input 
+                    v-model="taskName" 
+                    type="text" id="taskName" 
+                    placeholder="Nombre de la tarea" />
+            </div>
+            
+            <!-- Button triggers the form submit event -->
+            <button>Añadir tarea</button>
+        </form>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -30,8 +33,9 @@ const emit = defineEmits<{
 
 // formSubmitted is called when the form is submitted. It emits the 'addTask' event with the task name and resets the input.
 function formSubmitted() {
-  if (taskName.value.trim()) {
-  emit('addTask', taskName.value.trim())
+  const trimmedName = taskName.value.trim()
+  if (trimmedName) {
+  emit('addTask', trimmedName)
   taskName.value = ''
   }
 }

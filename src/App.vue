@@ -3,7 +3,11 @@
     <TaskForm @add-task="addTask"/>
 
     <!-- Passes tasks and computed totalDone to TaskList -->
-    <TaskList :tasks="tasks" :total-done="totalDone" @toggle-done="toggleDone" @remove-task="removeTask"/>
+    <TaskList 
+        :tasks="tasks" 
+        :total-done="totalDone" 
+        @toggle-done="toggleDone" 
+        @remove-task="removeTask"/>
 </template>
 
 <script setup lang="ts">
@@ -17,10 +21,7 @@ const tasks = ref<Task[]>([])
 
 // Load tasks from LocalStorage when the app starts
 onMounted(() => {
-  const saved = localStorage.getItem('tasks')
-  if (saved) {
-    tasks.value = JSON.parse(saved)
-  }
+  tasks.value = JSON.parse( localStorage.getItem('tasks') ?? '[]' )
 })
 
 // Save tasks to LocalStorage whenever they change
