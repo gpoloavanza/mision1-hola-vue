@@ -52,11 +52,20 @@ function toggleDone(id: number) {
 }
 
 // Remove a task by ID
+/* Splice version:
 function removeTask(id: number) {
   const index = tasks.value.findIndex(task => task.id === id)
     if (index !== -1) {
         tasks.value.splice(index, 1)
     }
+}
+*/
+
+// Filter version:
+function removeTask(id: number) {
+  tasks.value = tasks.value.filter(
+    task => task.id !== id
+  )
 }
 </script>
 
