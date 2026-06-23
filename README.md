@@ -1,4 +1,4 @@
-# Mission 2 – CRUD ToDo (Vue 3 + Vite + TypeScript)
+# VUE Course (Vue 3 + Vite + TypeScript)
 
 ![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vue.js&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?logo=vite&logoColor=white)
