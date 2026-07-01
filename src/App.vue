@@ -1,140 +1,56 @@
 <template>
-    <!-- Receives the new task name from TaskForm -->
-    <TaskForm @add-task="addTask"/>
-
-    <!-- Passes tasks and computed totalDone to TaskList -->
-    <TaskList 
-        :tasks="tasks" 
-        :total-done="totalDone" 
-        @toggle-done="toggleDone" 
-        @remove-task="removeTask"/>
+    <TrainerForm />
+    <PokemonCard :image="pokemon.image" :name="pokemon.name" :types="pokemon.types" />
+    <!-- v-on directive calling @random from RandomButton.vue -->
+    <RandomButton @random="randomPokemon" />
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
-import TaskForm from './components/TaskForm.vue'
-import TaskList from './components/TaskList.vue'
-import type { Task } from './types'
+// Importing ref for reactive variables and onMounted
+import { ref, onMounted } from 'vue';
 
-// Reactive array of tasks
-const tasks = ref<Task[]>([])
+// Importing components
+import TrainerForm from './components/TrainerForm.vue';
+import PokemonCard from './components/PokemonCard.vue';
+import RandomButton from './components/RandomButton.vue';
+import type { PokemonResponse } from './interfaces/pokemon'
 
-// Load tasks from LocalStorage when the app starts
-onMounted(() => {
-  tasks.value = JSON.parse( localStorage.getItem('tasks') ?? '[]' )
+// Importing axios function for API calls
+import axios from 'axios';
+
+// Pokemon reactive variable to save image, name and types into PokemonCard
+const pokemon = ref({
+    image: '',
+    name: '',
+    types: [] as string[]
 })
 
-// Save tasks to LocalStorage whenever they change
-watch(tasks, (newTasks) => {
-  localStorage.setItem('tasks', JSON.stringify(newTasks))
-}, { deep: true })
+// Importing API_URL from .env
+const API_URL = import.meta.env.VITE_API_URL
 
-// Computed property: counts completed tasks
-const totalDone = computed(() => tasks
-    .value
-    .reduce((total, task) => task.state ? total + 1 : total, 0))
+// Axios function for getPokemon()
+async function getPokemon(id: number) {
+    // axios API call through the PokemonResponse interface and the API_URL + id
+    const response = await axios.get<PokemonResponse>(`${API_URL}/${id}`)
 
-// Add a new task to the list
-function addTask(taskName: string) {
-  tasks.value.push({
-    id: Date.now(),
-    title: taskName,
-    state: false
-  })
+    // Taking the image and name from the response and saving it into the pokemon reactive variable
+    pokemon.value.image = response.data.sprites.front_default
+    pokemon.value.name = response.data.name
+
+    // Mapping the types from the response and saving it into the pokemon reactive variable
+    const types = response.data.types.map(pokemonType => pokemonType.type.name)
+    pokemon.value.types = types
 }
 
-// Toggle the "done" state of a task
-function toggleDone(id: number) {
-  const task = tasks.value.find(task => task.id === id)
-  if (task) {
-    task.state = !task.state
-  }
+// Function to get a random pokemon Id 
+async function randomPokemon() {
+    const randomId = Math.floor(Math.random() * 1025) + 1
+    await getPokemon(randomId)
+
 }
 
-// Remove a task by ID
-/* Splice version:
-function removeTask(id: number) {
-  const index = tasks.value.findIndex(task => task.id === id)
-    if (index !== -1) {
-        tasks.value.splice(index, 1)
-    }
-}
-*/
-
-// Filter version:
-function removeTask(id: number) {
-  tasks.value = tasks.value.filter(
-    task => task.id !== id
-  )
-}
+// When the component is mounted, it will execute randomPokemon()
+onMounted(() => {
+    randomPokemon()
+})
 </script>
-
-<style>
-    #app {
-        font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue';
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: black;
-        margin-top: 60px;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        justify-content: center;
-        width: 100%;
-    }
-
-    form button {
-    background-color: goldenrod;
-    color: black;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    align-self: end;
-    }
-
-    button:hover {
-    background-color: darkorange;
-    }
-
-    .container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        height: auto;
-        min-height: 180px;
-        background-color: #f5f5f5;
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        padding: 20px;
-        width: 75%;
-        margin: 0 auto 20px auto;
-        box-sizing: border-box;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        margin-bottom: 50px;
-    }
-
-    .container:hover {
-        border-color: goldenrod;
-        box-shadow: 0 8px 25px rgba(218, 165, 32, 0.15);
-    }
-
-    h1 {
-        font-weight: bold;
-        text-align: left;
-        margin: 0 0 20px 0;
-        min-width: 200px;
-        height: 40px;
-        line-height: 40px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-</style>
